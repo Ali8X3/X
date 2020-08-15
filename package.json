@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "browser-sync": "^2.26.12",
     "cssnano": "^4.1.10",
     "gulp": "^4.0.2",
     "gulp-cssnano": "^2.1.3",

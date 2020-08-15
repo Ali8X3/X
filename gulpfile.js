@@ -1,23 +1,28 @@
+let gulp = require('gulp');
+var browserSync = require('browser-sync').create();
+var sass = require('gulp-sass');
 
-var gulp      = require('gulp'),
-    sass        = require('gulp-sass'),
-    cssnano     = require('gulp-cssnano'),
-    rename      = require('gulp-rename');
-    // browserSync = require('browser-sync'),
-    // concat      = require('gulp-concat'),
-    // uglify      = require('gulp-uglifyjs'),
-
-gulp.task('css-libs', ['sass'], function() {
-    return gulp.src('app/css/libs.css')
-        .pipe(cssnano())
-        .pipe(rename({suffix: '.min'}))
-        .pipe(gulp.dest('app/css'));
+// ----- scss -----
+gulp.task('scss', function(done) {
+    gulp.src("app/scss/*.scss")
+        .pipe(sass())
+        .pipe(gulp.dest("app/css"))
+        .pipe(browserSync.stream());
+    done();
 });
 
-gulp.task('watch', ['css-libs', ], function() {
-    gulp.watch('app/sass/**/*.sass', ['sass']);
-    // gulp.watch('app/*.html', browserSync.reload); // Наблюдение за HTML файлами в корне проекта
-    // gulp.watch('app/js/**/*.js', browserSync.reload);   // Наблюдение за JS файлами в папке js
+// ----- serv -----
+gulp.task('serv', function(done) {
+    browserSync.init({
+        server: "src/"
+    });
+    gulp.watch("app/scss/*.scss", gulp.series('scss'));
+    gulp.watch("app/*.html").on('change', () => {
+        browserSync.reload();
+        done();
+    });
+    done();
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', gulp.series('scss', 'serv'));
+
