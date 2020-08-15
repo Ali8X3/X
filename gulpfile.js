@@ -1,28 +1,29 @@
-let gulp = require('gulp');
-var browserSync = require('browser-sync').create();
-var sass = require('gulp-sass');
+let gulp = require('gulp'),
+    sass = require('gulp-sass'),
+    html_min = require('gulp-htmlmin');
+
+// ------ html-min -----
+gulp.task('html-min', function() {
+    return gulp.src('app/**/*.html')
+        .pipe(html_min({collapseWhitespace: true}))
+        .pipe(gulp.dest('dist'));
+    done();
+});
 
 // ----- scss -----
 gulp.task('scss', function(done) {
     gulp.src("app/scss/*.scss")
         .pipe(sass())
         .pipe(gulp.dest("app/css"))
-        .pipe(browserSync.stream());
     done();
 });
 
-// ----- serv -----
-gulp.task('serv', function(done) {
-    browserSync.init({
-        server: "src/"
-    });
-    gulp.watch("app/scss/*.scss", gulp.series('scss'));
-    gulp.watch("app/*.html").on('change', () => {
-        browserSync.reload();
-        done();
-    });
-    done();
+// ----- watch -----
+gulp.task('watch', function() {
+    gulp.watch('app/scss/**/*.scss', gulp.parallel('scss'));
+    gulp.watch('app/**/*.html', gulp.parallel('html-min'));
 });
 
-gulp.task('default', gulp.series('scss', 'serv'));
+// ----- gulp -----
+gulp.task('default', gulp.parallel('scss', 'html-min', 'watch'));
 
