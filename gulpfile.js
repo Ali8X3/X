@@ -27,3 +27,4 @@ gulp.task('watch', function() {
 // ----- gulp -----
 gulp.task('default', gulp.parallel('scss', 'html-min', 'watch'));
 
+// gulp.series( gulp.parallel(a, b), gulp.parallel(c, d) )
